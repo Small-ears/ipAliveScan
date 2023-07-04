@@ -1,2 +1,62 @@
-# ipAliveScan
-The main implementation involves using ICMP ping and TCP port scanning techniques to detect the live IP addresses within an internal network.
+## ipAliveScan
+
+主要用于内网存活IP探测，平时进行存活探测时发现有些工具很慢，而且准确性不敢保证，于是自己写了一个。
+
+### 一、使用
+
+```
+Usage：
+  -c int
+        并发数量,默认为50 (default 50)
+  -p    ICMP ping    
+  -s    save result
+  -t    TCP
+  -u string
+        example: 127.0.0.1,127.0.0.1/24,127.0.0.*,127.0.0.1-10
+        
+  or
+  go run .\main.go -u 127.0.0.1-100 -p -t -s -c 100   //如果同时用-p和-t在指定并发，那么并发数会是指定的一倍。
+```
+
+
+
+### 二、其他唠唠叨叨记录
+
+#### 1、主要能用于内网主机探测的协议：
+
+ICMP
+SMB
+TCP
+UDP
+ARP
+SNMP
+NETBIOS
+
+#### 2、协议的问题
+ICMP：准确率不高，受多种因素的影响，每次扫描结果都不一致；
+SMB：需要对固定的端口进行连接，内网很多都会封禁该协议端口，具有较大的局限性
+ARP：只能扫一个子网，具有较大的局限性
+NETBIOS：只能扫一个子网，具有较大的局限性
+SNMP：需要对固定的端口进行连接，而且需要开启161才行，具有较大的局限性
+
+#### 3、较为合适的组合（但还是存在准确性问题，只能尽力去扫描出内网的存活主机）
+ICMP+TCP
+
+#### 4、常见的TCP存活探测端口
+
+```
+		22,  // SSH
+		21,  // FTP
+		23,  // Telnet
+		25,  // SMTP
+		53,  //DNS
+		80,  // HTTP
+		110, // POP3
+		135, //RPC
+		139,  //RPC
+		143,  // IMAP
+		443,  // HTTPS
+		3306, // MySQL
+		3389, // RDP
+```
+
